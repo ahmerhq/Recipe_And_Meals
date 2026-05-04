@@ -4,7 +4,7 @@ from database_models import Base
 from database import engine
 from authentication import signup, login
 import recipe
-
+from oauth_google import router as google_auth_router
 
 app = FastAPI(title="Recipe & Meals App")
 
@@ -22,7 +22,7 @@ app.add_middleware(
 app.include_router(signup.router)
 app.include_router(login.router)
 app.include_router(recipe.router)
-
+app.include_router(google_auth_router)
 
 
 

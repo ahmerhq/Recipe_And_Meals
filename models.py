@@ -6,7 +6,8 @@ from typing import Optional
 class userCreate(BaseModel):
     email: EmailStr
     username: str
-    password: str
+    password: Optional[str] = None   # allow None for Google users
+    auth_provider: str = "local"     # default is local
 
     #setting email 
     @field_validator("email")
@@ -18,15 +19,18 @@ class userCreate(BaseModel):
     
     # setting password requirements
     @field_validator("password")
-    def check_password(cls, p:str)-> str:
-        if len(p) < 2:
-            raise ValueError("Password must be at least 2 characters long")        
+    def check_password(cls, p, values):
+        # Only enforce password if local signup
+        if values.get("auth_provider") == "local":
+            if not p or len(p) < 2:
+                raise ValueError("Password must be at least 2 characters long")
         return p
 
 class UserResponse(BaseModel):
     id: int
     email: EmailStr
     username: str
+    auth_provider: str 
     created_at: datetime
 
     class config:

@@ -11,9 +11,12 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
-    password = Column(String, nullable=False)
+    password = Column(String, nullable=True)
+    auth_provider= Column(String, default="local")
     created_at = Column(DateTime, default=datetime.utcnow)
     favorite_meal = Column(String, nullable=True)
+    google_access_token = Column(String, nullable=True)
+    google_refresh_token = Column(String, nullable=True)
 
     recipe_table = relationship("Recipe", back_populates="assigned_user", cascade="all, delete-orphan")
 
