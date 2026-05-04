@@ -1,0 +1,325 @@
+* {
+    margin: 0%;
+    padding: 0%;
+}
+body {
+    background-color: #f0eded;   
+}
+                                            /* NAVBAR */
+.full-nav {
+    height: 60px;
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin: auto;
+    margin-top: 10px;
+    border-radius: 20px;
+    background-color: rgb(255, 255, 255);
+}
+
+.nav_heading {
+    display: inline;
+    font-size: 28px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.sign-log {
+    display: inline;
+}
+.sign-log button{
+    display: inline;
+    margin-left: 20px;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 6px 7px 7px 6px;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color:#0062D9;
+    color: white;
+}
+
+.nav_elements{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    list-style-type: none;
+}
+
+.nav_elements li {
+    margin: 0px 25px 0px 25px;
+    font-size: 20px;
+    font-weight: 600;
+    cursor: pointer;
+
+}
+
+.nav_elements li:hover{
+    text-decoration: underline;
+}
+
+.nav_elements li a {
+  text-decoration: none;
+  color: inherit; 
+  display: block; 
+}
+
+.sign-log a {
+  text-decoration: none;
+}
+
+
+
+
+
+/* heading_after_nav */
+
+.heading_after_nav {
+    text-align: center;
+    margin-top: 30px;
+}
+
+
+/* page 1 {Seach Recipe} */
+.first{
+    margin-top: 30px;
+    height: 500px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img1 {
+    height: 500px;
+    width: 600px;
+    border-radius: 20px;
+    transition: transform 0.3s ease; 
+    
+}
+
+.img1:hover {
+    transform: scale(1.1); /* Grows the image by 10% */
+} 
+
+.content_of_first{
+    text-align: center;
+    margin-left: 80px;
+    font-size: 20px;
+    font-weight: 600;
+}
+ 
+ /*             S E A R C H      P A G E      C S S                     */
+
+.search-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.search-heading {
+    font-size: 40px;
+}
+
+.search-para {
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.search-input {
+    margin-top: 10px;
+    width: 300px;
+    height: 40px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 500;
+    padding-left: 10px;
+
+}
+
+/* CSS of JS search page ||| JS random Page    */
+.recipe-result {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.recipe-card {
+  background-color: white;
+  width: 60%;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.instructions {
+  text-align: left;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+
+
+
+
+
+/*  RANDOM PAGE    */
+
+.random-box {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.random-box-heading {
+    font-size: 50px;
+}
+
+.random-box-para {
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: 600;
+
+}
+
+
+/*  F I L T E R       P A G E  */
+
+.filter-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 40px;
+}
+
+.filter-box {
+  background-color: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 40%;
+  text-align: center;
+}
+
+.filter-box h2 {
+  margin-bottom: 15px;
+}
+
+.filter-box select {
+  width: 200px;
+  height: 35px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*      S  I  G  N      U  P      P  A  G  E */
+
+.form-container {
+  width: 400px;
+  margin: 50px auto;
+  background-color: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.form-container h1 {
+  margin-bottom: 20px;
+}
+
+.form-container input {
+  width: 90%;
+  height: 35px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+
+
+/*  FAVORITE PAGE */
+.special-button {
+  background-color:#0062D9;
+  color: white; 
+  padding: 10px 20px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#userFavResult {
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.recipe-box {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  text-align: center;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.recipe-box h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.recipe-box pre {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/*  delete */
+.deleteContainer {
+  text-align: center;
+  margin-top: 50px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

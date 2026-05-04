@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Search Recipes - Recipe & Meals</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="full-nav">
+        <h3 class="nav_heading">Recipe & Meals</h3>
+        <div class="nav_elements">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="random.html">Random</a></li>
+          <li><a href="filter.html">Filter</a></li>
+          <li><a href="favorite.html">Favorite</a></li>
+          <li><a href="delete.html">Delete Account</a></li>
+        </div>
+        <div class="sign-log">
+          <a href="signup.html"><button>Signup</button></a>
+          <a href="login.html"><button>Login</button></a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- main content -->
+    <div class="search-container">
+      <h1 class="search-heading">Find a Recipe</h1>
+      <p class="search-para">
+        Simply enter the dish name and get detailed instructions and information
+        about it.
+      </p>
+      <p class="search-para" style="font-weight: 600">
+        Type the name of a dish below:
+      </p>
+      <br />
+
+      <input
+        style="margin-top: 5px"
+        class="search-input"
+        type="text"
+        placeholder="Search for pasta, tacos..."
+      />
+      <button class="special-button" id="searchButton" style="margin-top: 5px">
+        Search
+      </button>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="navbar.js"></script>
+  </body>
+</html>

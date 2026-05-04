@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Random Recipes - Recipe & Meals</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="full-nav">
+        <h3 class="nav_heading">Recipe & Meals</h3>
+        <div class="nav_elements">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="search.html">Search</a></li>
+          <li><a href="random.html">Random</a></li>
+          <li><a href="filter.html">Filter</a></li>
+          <li><a href="favorite.html">Favorite</a></li>
+          <li><a href="delete.html">Delete Account</a></li>
+        </div>
+        <div class="sign-log">
+          <a href="signup.html"><button>Signup</button></a>
+          <a href="login.html"><button>Login</button></a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="filter-container">
+      <!-- Category Filter -->
+      <div class="filter-box">
+        <h2>Filter by Category</h2>
+        <select id="categorySelect">
+          <option value="Seafood">Seafood</option>
+          <option value="Vegetarian">Vegetarian</option>
+          <option value="Dessert">Dessert</option>
+        </select>
+        <button id="categoryBtn" class="special-button">Filter</button>
+        <div id="categoryResults"></div>
+      </div>
+
+      <!-- Country Filter -->
+      <div class="filter-box">
+        <h2>Filter by Country</h2>
+        <select id="countrySelect">
+          <option value="American">American</option>
+          <option value="Canadian">Canadian</option>
+          <option value="Italian">Italian</option>
+        </select>
+        <button id="countryBtn" class="special-button">Filter</button>
+        <div id="countryResults"></div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="navbar.js"></script>
+  </body>
+</html>
