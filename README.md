@@ -49,10 +49,10 @@ Clone the repo:
 ``` git clone https://github.com/your-username/recipe-app.git```
 
 # Backend:
-`
-cd backend
-pip install -r requirements.txt
-uvicorn main:app --reload `
+
+`cd backend`
+`pip install -r requirements.txt`
+`uvicorn main:app --reload` 
 
 Frontend:
 
