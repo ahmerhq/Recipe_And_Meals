@@ -296,9 +296,17 @@ body {
 }
 
 
+ /* oauth login button */
+#googleSignUp {
+  background-color: #4285F4; /* Google blue */
+  color: white;
+}
 
 
-
+#googleLogin {
+  background-color: #4285F4;
+  color: white;
+}
 
 
 

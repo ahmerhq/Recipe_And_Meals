@@ -11,7 +11,6 @@ from database_models import User
 from database import sessionLocal
 from oauth2 import create_token
 
-
 router = APIRouter(tags=["Google Oauth"])
 
 load_dotenv()
@@ -21,7 +20,7 @@ GOOGLE_CLIENT_SECRET=os.getenv("GOOGLE_CLIENT_SECRET")
 GOOGLE_REDIRECT_URI=os.getenv("AUTHORIZED_REDIRECT_URL")
 
 
-# 1. redirect user to "sigin in with google" screen
+# 1. redirect user to "signin in with google" screen
 
 @router.get("/auth/google/login")
 def google_login():
@@ -61,8 +60,7 @@ def google_callback(code: str):
     # 3. fetch user info
     userinfo = requests.get(
         "https://www.googleapis.com/oauth2/v3/userinfo",
-        headers={"Authorization": f"Bearer {google_access_token}"}
-        ).json()
+        headers={"Authorization": f"Bearer {google_access_token}"}).json()
     
     email = userinfo["email"]
     username = userinfo.get("name", "GoogleUser")
@@ -86,15 +84,17 @@ def google_callback(code: str):
         db.commit()
         db.refresh(user)
     else:
-        # Update tokens for existing user
+        # Update tokens for existing user everytime.
         user.google_access_token = google_access_token
-        if google_refresh_token:
-            user.google_refresh_token = google_refresh_token
+        if google_refresh_token:# ref token issued only once.
+            user.google_refresh_token = google_refresh_token 
         db.commit()
 
-    jwt_token = create_token(data={"id": user.id})
+    jwt_token = create_token(data={"user_id": user.id})
+
+    frontend_url = f"http://127.0.0.1:3000/index.html?token={jwt_token}"
     
-    return JSONResponse({"access_token": jwt_token, "token_type": "bearer"})
+    return RedirectResponse(frontend_url)
 
 
 # 5. Refresh Google Access Token endpoint

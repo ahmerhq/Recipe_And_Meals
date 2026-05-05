@@ -67,5 +67,15 @@ class token(BaseModel):
     token_type: str
 
 
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
+
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
+
 class token_data(BaseModel):
     id: Optional[int] = None

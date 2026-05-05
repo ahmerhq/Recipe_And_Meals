@@ -1,4 +1,5 @@
 const loginForm = document.querySelector("#loginForm");
+const googleLoginBtn = document.querySelector("#googleLogin");
 
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -18,7 +19,8 @@ loginForm.addEventListener("submit", async (e) => {
   if (res.ok) {
     const data = await res.json();
     alert(`login successfull`);
-    localStorage.setItem("access_token", data.access_token);
+    localStorage.setItem("access_token", data.access_token);  // store acccess token
+    localStorage.setItem("access_token", data.refresh_token); // store refresh token.
     loginForm.reset();
     window.location.href = "/index.html"
 
@@ -28,4 +30,31 @@ loginForm.addEventListener("submit", async (e) => {
     alert(`error occured. ${err.detail}`);
   }
 });
+
+
+
+
+// handle google login button
+googleLoginBtn.addEventListener("click", () => {
+  window.location.href= "http://127.0.0.1:8000/auth/google/login";
+})
+
+
+// handle redirect back to frontend
+const params= new URLSearchParams(window.location.search);
+const token= params.get("token"); // take value after url?token=
+
+if (token){
+  localStorage.setItem("access_token", token);
+  alert("login successfull")
+
+  window.location.href= "/index.html";
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  updateNavbar();
+}
+
+
+
+
 

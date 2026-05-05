@@ -1,3 +1,14 @@
+// Extract token from URL query parameter and store in localStorage
+function extractAndStoreToken() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+  if (token) {
+    localStorage.setItem('access_token', token);
+    // Clean up URL to remove the token query parameter
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
+
 function updateNavbar() {
   const token = localStorage.getItem("access_token");
   const loginBtn = document.querySelector(".sign-log a[href='login.html'] button");
@@ -19,4 +30,7 @@ function updateNavbar() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", updateNavbar);
+document.addEventListener("DOMContentLoaded", () => {
+  extractAndStoreToken();
+  updateNavbar();
+});

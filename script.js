@@ -215,6 +215,10 @@ if (dltBtn) {
       const data = await response.json();
       dltText.innerHTML = `<div>${data.message}</div>`;
       localStorage.removeItem("access_token");
+      window.location.href = "/index.html";
+      signupBtn.style.display = "inline-block";
+      loginBtn.textContent = "Login";
+      localStorage.removeItem("access_token");
     } else {
       const error = await response.json();
       dltText.innerHTML = `<div>${error.detail}</div>`;

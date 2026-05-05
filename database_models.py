@@ -17,6 +17,8 @@ class User(Base):
     favorite_meal = Column(String, nullable=True)
     google_access_token = Column(String, nullable=True)
     google_refresh_token = Column(String, nullable=True)
+    refresh_token = Column(String, nullable=True)
+    refresh_token_expiry = Column(DateTime, nullable=True)
 
     recipe_table = relationship("Recipe", back_populates="assigned_user", cascade="all, delete-orphan")
 

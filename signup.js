@@ -1,4 +1,5 @@
 const signUpForm = document.querySelector("#signupForm");
+const googleLoginBtn = document.querySelector("#googleSignUp");
 
 signUpForm.addEventListener("submit", async (e) => {
   const username = document.querySelector("#username").value.trim();
@@ -21,3 +22,24 @@ signUpForm.addEventListener("submit", async (e) => {
     alert(`signup failed. ${error.msg}`);
   }
 });
+
+
+
+
+// SIGNUP WITH GOOGLE FLOW
+googleLoginBtn.addEventListener("click", async () => {
+  window.location.href = "http://127.0.0.1:8000/auth/google/login";
+});
+
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token");
+
+if (token) {
+  localStorage.setItem("access_token", token);
+  alert("signup successfull");
+
+  window.location.href = "/index.html";
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  updateNavbar();
+}
