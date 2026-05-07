@@ -1,5 +1,6 @@
 import requests
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Response
+from fastapi.responses import JSONResponse
 from models import itemByNameCreate, itemByNameResponse, UserFavFood, UserFavResponse
 from database import get_db
 from sqlalchemy.orm import Session
@@ -116,12 +117,17 @@ def recipe_of_fav_item(db:Session = Depends(get_db), uc:User = Depends(allow_acc
     response = requests.get(url, params=payload)
     data = response.json()
 
+    # Ensure meals is a list
+    if not data.get("meals") or not isinstance(data["meals"], list):
+        raise HTTPException(status_code=404, detail="Favorite meal not found. Please set a valid favorite meal.")
+    
+    meal = data["meals"][0]
 
     recipe = Recipe(
-        item_name=data["meals"][0]["strMeal"],
-        item_country=data["meals"][0]["strArea"],
-        item_category=data["meals"][0]["strCategory"],
-        item_recipe=data["meals"][0]["strInstructions"].replace("\r\n", "\n"),
+        item_name=meal.get("strMeal", "Unknown"),
+        item_country=meal.get("strArea", "Unknown"),
+        item_category=meal.get("strCategory", "Unknown"),
+        item_recipe=meal.get("strInstructions", "").replace("\r\n", "\n"),
         user_id=db_user.id
     )
     db.add(recipe)
@@ -132,12 +138,15 @@ def recipe_of_fav_item(db:Session = Depends(get_db), uc:User = Depends(allow_acc
 
 # delete user 
 @router.delete("/delete")
-def delete_account(db:Session = Depends(get_db),uc:User = Depends(allow_access)):
+def delete_account(response: Response,  db:Session = Depends(get_db),uc:User = Depends(allow_access)):
     db_user = db.query(User).filter(User.id == uc.id).first()
 
     db.delete(db_user)
     db.commit()
-    return {"message": "Your account and all related data has been deleted"}
+
+    response.delete_cookie("refresh_token")
+    response.status_code = 200
+    return JSONResponse(content={"message": "Your account and all related data has been deleted"}) 
 
 
 

@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator, ValidationInfo
 import re
 from datetime import datetime
 from typing import Optional
@@ -19,9 +19,9 @@ class userCreate(BaseModel):
     
     # setting password requirements
     @field_validator("password")
-    def check_password(cls, p, values):
+    def check_password(cls, p, info: ValidationInfo):
         # Only enforce password if local signup
-        if values.get("auth_provider") == "local":
+        if info.data.get("auth_provider") == "local":
             if not p or len(p) < 2:
                 raise ValueError("Password must be at least 2 characters long")
         return p
@@ -69,7 +69,6 @@ class token(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
-    refresh_token: str
     token_type: str
 
 

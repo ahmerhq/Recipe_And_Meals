@@ -118,45 +118,56 @@ const favForm = document.querySelector("#select-fav");
 const userFavResult = document.querySelector("#userFavResult");
 const getRecipeBtn = document.querySelector("#getRecipeBtn"); // for getting fav recipe
 
-document.addEventListener("DOMContentLoaded", async () => {
+async function initializeFavoritePage() {
   if (!userFavResult || !getRecipeBtn) return;
 
-  const token = localStorage.getItem("access_token");
-  if (!token) {
+  // Make sure refreshToken runs and completes
+  await refreshToken();
+
+  if (!window.accessToken) {
     userFavResult.innerHTML = "<p>Please login first.</p>";
     getRecipeBtn.style.display = "none";
     return;
   }
 
-  const re = await fetch("http://127.0.0.1:8000/recipe/favorite", {
+  const re = await fetchWithAuth("http://127.0.0.1:8000/recipe/favorite", {
     method: "GET",
-    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (re.ok) {
+    const data = await re.json();
     getRecipeBtn.style.display = "inline-block";
     userFavResult.innerHTML =
-      "<p>You already have favorite food set. Either update it by choosing above, or get its recipe by clicking the button below.</p>";
+      `<p>Your favorite dish is saved: <strong>${data.item_name}</strong>. You can update it above or get its recipe below.</p>`;
   } else {
+    const error = await re.json();
     getRecipeBtn.style.display = "none";
-    userFavResult.innerHTML = "<p>No favorite set. Choose one above.</p>";
+    userFavResult.innerHTML = `<p style="color:red;">${error.detail || "No favorite set. Choose one above."}</p>`;
   }
-});
+}
+
+// Handle both cases: if DOMContentLoaded already fired, run immediately
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initializeFavoritePage);
+} else {
+  initializeFavoritePage();
+}
+
 
 if (favForm) {
   favForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const favorite_food = document.querySelector("#favorite").value.trim();
-    const token = localStorage.getItem("access_token");
+    const token = window.accessToken;
 
-    const response = await fetch(`http://127.0.0.1:8000/favorite_meal`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const response = await fetchWithAuth(
+      `http://127.0.0.1:8000/favorite_meal`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ favorite_food }),
       },
-      body: JSON.stringify({ favorite_food }),
-    });
+    );
     if (response.ok) {
       const data = await response.json();
       userFavResult.innerHTML = `<p>${data.message}</p>`;
@@ -171,10 +182,9 @@ if (favForm) {
 
 if (getRecipeBtn) {
   getRecipeBtn.addEventListener("click", async () => {
-    const token = localStorage.getItem("access_token");
-    const res = await fetch("http://127.0.0.1:8000/recipe/favorite", {
+    const token = window.accessToken;
+    const res = await fetchWithAuth("http://127.0.0.1:8000/recipe/favorite", {
       method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
     });
 
     const recipeBox = document.querySelector("#recipeBox");
@@ -202,26 +212,37 @@ const dltText = document.querySelector("#dltText");
 
 if (dltBtn) {
   dltBtn.addEventListener("click", async () => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
+    const token = window.accessToken;
+
+    if (!window.accessToken){
+      await refreshToken();
+    }
+
+    if (!window.accessToken) {
       dltText.innerHTML = "<div>Please sign in first to delete account</div>";
       return;
     }
-    const response = await fetch("http://127.0.0.1:8000/delete", {
+    const response = await fetchWithAuth("http://127.0.0.1:8000/delete", {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
     });
     if (response.ok) {
       const data = await response.json();
       dltText.innerHTML = `<div>${data.message}</div>`;
-      localStorage.removeItem("access_token");
+      window.accessToken = null;
+      
+
       window.location.href = "/index.html";
       signupBtn.style.display = "inline-block";
       loginBtn.textContent = "Login";
-      localStorage.removeItem("access_token");
+
+      updateNavbar()
     } else {
-      const error = await response.json();
-      dltText.innerHTML = `<div>${error.detail}</div>`;
+      let errorMsg = "Unexpected error";
+      try {
+        const error = await response.json();
+        errorMsg = error.detail || JSON.stringify(error);
+      } catch (e) {}
+      dltText.innerHTML = `<div>${errorMsg}</div>`;
     }
   });
 }

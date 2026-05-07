@@ -74,7 +74,6 @@ def allow_access(token:str = Depends(auth2_scheme), db:Session = Depends(get_db)
     )
 
     new_token = verrify_token(token, credential_exception)
-
     user_query = db.query(User).filter(User.id == new_token.id).first()
 
     if not user_query:
@@ -83,31 +82,32 @@ def allow_access(token:str = Depends(auth2_scheme), db:Session = Depends(get_db)
     return user_query
 
 
-refresh_token_scheme = OAuth2PasswordBearer(tokenUrl="refresh")
 
-def verify_refresh_token_dependency(token: str = Depends(refresh_token_scheme), db: Session = Depends(get_db)):
-    credential_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid refresh token",
-        headers={"WWW-Authenticate": "bearer"},
-    )
+# function that verifies that ref token is valid.
+# refresh_token_scheme = OAuth2PasswordBearer(tokenUrl="refresh")
+# def verify_refresh_token_dependency(token: str = Depends(refresh_token_scheme), db: Session = Depends(get_db)):
+#     credential_exception = HTTPException(
+#         status_code=status.HTTP_401_UNAUTHORIZED,
+#         detail="Invalid refresh token",
+#         headers={"WWW-Authenticate": "bearer"},
+#     )
     
-    token_data_obj = verify_refresh_token(token, credential_exception)
+#     token_data_obj = verify_refresh_token(token, credential_exception)
     
-    user = db.query(User).filter(User.id == token_data_obj.id).first()
+#     user = db.query(User).filter(User.id == token_data_obj.id).first()
     
-    if not user or user.refresh_token != token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired refresh token"
-        )
+#     if not user or user.refresh_token != token:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Invalid or expired refresh token"
+#         )
     
-    if user.refresh_token_expiry and user.refresh_token_expiry < datetime.utcnow():
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token has expired"
-        )
+#     if user.refresh_token_expiry and user.refresh_token_expiry < datetime.utcnow():
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Refresh token has expired"
+#         )
     
-    return user
+#     return user
 
 

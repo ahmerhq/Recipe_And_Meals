@@ -1,60 +1,71 @@
 const loginForm = document.querySelector("#loginForm");
 const googleLoginBtn = document.querySelector("#googleLogin");
 
-loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+// LOGIN FLOW
+if (loginForm) {
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const username = document.querySelector("#username").value.trim();
-  const password = document.querySelector("#password").value.trim();
+    const username = document.querySelector("#username").value.trim();
+    const password = document.querySelector("#password").value.trim();
 
-  const formData = new URLSearchParams();
-  formData.append("username", username);
-  formData.append("password", password);
+    const formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("password", password);
 
-  const res = await fetch("http://127.0.0.1:8000/login", {
-    method: "POST",
-    body: formData,
+    try {
+      const res = await fetch("http://127.0.0.1:8000/login", {
+        method: "POST",
+        body: formData,
+        credentials: "include" // important to send/recieve tokens
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        alert(`login successfull`);
+        
+        window.accessToken = data.access_token;  // store in memory only, httpOnly cookie is secure
+
+        loginForm.reset();
+        window.location.href = "/index.html";
+
+        updateNavbar();
+      } else {
+        const err = await res.json();
+        alert(`error occured. ${err.detail}`);
+      }
+    } catch (error) {
+      alert(`Network error ${error.message}`);
+    }
   });
-
-  if (res.ok) {
-    const data = await res.json();
-    alert(`login successfull`);
-    localStorage.setItem("access_token", data.access_token);  // store acccess token
-    localStorage.setItem("access_token", data.refresh_token); // store refresh token.
-    loginForm.reset();
-    window.location.href = "/index.html"
-
-    updateNavbar()
-  } else {
-    const err = await res.json();
-    alert(`error occured. ${err.detail}`);
-  }
-});
-
-
-
-
-// handle google login button
-googleLoginBtn.addEventListener("click", () => {
-  window.location.href= "http://127.0.0.1:8000/auth/google/login";
-})
-
-
-// handle redirect back to frontend
-const params= new URLSearchParams(window.location.search);
-const token= params.get("token"); // take value after url?token=
-
-if (token){
-  localStorage.setItem("access_token", token);
-  alert("login successfull")
-
-  window.location.href= "/index.html";
-  window.history.replaceState({}, document.title, window.location.pathname);
-
-  updateNavbar();
 }
 
 
 
+
+
+// // handle google login button
+if (googleLoginBtn) {
+  googleLoginBtn.addEventListener("click", () => {
+    window.location.href = "http://127.0.0.1:8000/auth/google/login";
+  });
+}
+
+// handle redirect back to frontend
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token"); // take value after url?token=
+
+if (token) {
+  // store access token only in memory, httpOnly cookie is secure
+  window.accessToken = token;
+  alert("login successfull");
+   
+  // clean url
+  window.history.replaceState({}, document.title, window.location.pathname);
+  
+  // update navbar
+  updateNavbar();
+   
+}
 
 

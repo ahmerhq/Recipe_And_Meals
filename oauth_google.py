@@ -1,7 +1,7 @@
 import os 
 from dotenv import load_dotenv
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import RedirectResponse, JSONResponse
 import requests
 import urllib.parse
@@ -9,7 +9,7 @@ import urllib.parse
 from sqlalchemy.orm import Session
 from database_models import User
 from database import sessionLocal
-from oauth2 import create_token
+from oauth2 import create_token, create_refresh_token
 
 router = APIRouter(tags=["Google Oauth"])
 
@@ -68,71 +68,101 @@ def google_callback(code: str):
 
     # 4. check database 
     db: Session = sessionLocal()
-    user = db.query(User).filter(User.email == email).first()
+    try:
+        user = db.query(User).filter(User.email == email).first()
 
-    if not user:
-        user= User(
-            email=email,
-            username=username,
-            password=None,
-            auth_provider="google",
-            google_access_token=google_access_token,
-            google_refresh_token=google_refresh_token
+        if not user:
+            user= User(
+                email=email,
+                username=username,
+                password=None,
+                auth_provider="google",
+                google_access_token=google_access_token,
+                google_refresh_token=google_refresh_token
+            )
+
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        else:
+            # Update tokens for existing user everytime.
+            user.google_access_token = google_access_token
+            if google_refresh_token:# ref token issued only once.
+                user.google_refresh_token = google_refresh_token 
+            db.commit()
+
+        # Create refresh token for app authentication
+        payload = {"user_id": user.id}
+        refresh_token, refresh_expiry = create_refresh_token(payload)
+        
+        # Store refresh token in database
+        user.refresh_token = refresh_token
+        user.refresh_token_expiry = refresh_expiry
+        db.commit()
+
+        # Create access token for frontend
+        jwt_token = create_token(data={"user_id": user.id})
+
+        # Create response that redirects to frontend with token
+        frontend_url = f"http://127.0.0.1:3000/index.html?token={jwt_token}"
+        response = RedirectResponse(url=frontend_url)
+        
+        # Set refresh token cookie (same as manual login)
+        response.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            httponly=True,
+            secure=False,   # set to True only in production HTTPS
+            samesite="Lax",  # prevent CSRF, but allow redirect
+            path="/"        # available at all paths
         )
+        return response
 
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-    else:
-        # Update tokens for existing user everytime.
-        user.google_access_token = google_access_token
-        if google_refresh_token:# ref token issued only once.
-            user.google_refresh_token = google_refresh_token 
-        db.commit()
-
-    jwt_token = create_token(data={"user_id": user.id})
-
-    frontend_url = f"http://127.0.0.1:3000/index.html?token={jwt_token}"
-    
-    return RedirectResponse(frontend_url)
+    finally:
+        db.close()
 
 
-# 5. Refresh Google Access Token endpoint
-@router.post("/auth/google/refresh")
-def refresh_google_token(user_id: int):
-    """Refresh Google access token using refresh token"""
-    db: Session = sessionLocal()
-    user = db.query(User).filter(User.id == user_id).first()
-    
-    if not user or not user.google_refresh_token:
-        return JSONResponse({"error": "User not found or no refresh token"}, status_code=401)
-    
-    token_url = "https://oauth2.googleapis.com/token"
-    data = {
-        "client_id": GOOGLE_CLIENT_ID,
-        "client_secret": GOOGLE_CLIENT_SECRET,
-        "refresh_token": user.google_refresh_token,
-        "grant_type": "refresh_token"
-    }
-    
-    r = requests.post(token_url, data=data)
-    new_tokens = r.json()
-    
-    if "error" in new_tokens:
-        return JSONResponse({"error": "Failed to refresh token"}, status_code=401)
-    
-    # Update database with new access token
-    user.google_access_token = new_tokens['access_token']
-    db.commit()
-    
-    # Create new JWT token for your app
-    jwt_token = create_token(data={"id": user.id})
-    
-    return JSONResponse({
-        "access_token": jwt_token,
-        "token_type": "bearer",
-        "expires_in": new_tokens.get('expires_in', 3600)
-    })
+
+
+# # 5. Refresh Google Access Token endpoint
+# @router.post("/auth/google/refresh")
+# def refresh_google_token(user_id: int):
+#     """Refresh Google access token using refresh token"""
+#     db: Session = sessionLocal()
+#     try:
+#         user = db.query(User).filter(User.id == user_id).first()
+        
+#         if not user or not user.google_refresh_token:
+#             return JSONResponse({"error": "User not found or no refresh token"}, status_code=401)
+        
+#         token_url = "https://oauth2.googleapis.com/token"
+#         data = {
+#             "client_id": GOOGLE_CLIENT_ID,
+#             "client_secret": GOOGLE_CLIENT_SECRET,
+#             "refresh_token": user.google_refresh_token,
+#             "grant_type": "refresh_token"
+#         }
+        
+#         r = requests.post(token_url, data=data)
+#         new_tokens = r.json()
+        
+#         if "error" in new_tokens:
+#             return JSONResponse({"error": "Failed to refresh token"}, status_code=401)
+        
+#         # Update database with new access token
+#         user.google_access_token = new_tokens['access_token']
+#         db.commit()
+        
+#         # Create new JWT token for your app
+#         jwt_token = create_token(data={"user_id": user.id})
+        
+#         return JSONResponse({
+#             "access_token": jwt_token,
+#             "token_type": "bearer",
+#             "expires_in": new_tokens.get('expires_in', 3600)
+#         })
+#     finally:
+#         db.close()
 
 
 
