@@ -4,7 +4,7 @@ from database_models import User
 from database import get_db
 from sqlalchemy.orm import Session
 from utils import verify_pass
-from oauth2 import create_token, create_refresh_token, verify_refresh_token
+from oauth2 import create_token, create_refresh_token, verify_access_token
 from models import TokenResponse, RefreshTokenRequest
 from datetime import datetime
 
@@ -57,7 +57,7 @@ def refresh(response: Response, request: Request, db: Session = Depends(get_db))
         raise credential_exception
     
     # Verify the refresh token JWT
-    token_data_obj = verify_refresh_token(refresh_token, credential_exception)
+    token_data_obj = verify_access_token(refresh_token, credential_exception)
     
     # Get user from database
     user = db.query(User).filter(User.id == token_data_obj.id).first()
