@@ -63,3 +63,7 @@ Notes
 
 - OTP/2FA not implemented — this is just a hobby project.
 
+
+Uselss Notes
+- Just adding to see whether new name and email are synced with vs code or not.
+
