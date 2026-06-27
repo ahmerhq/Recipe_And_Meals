@@ -1,4 +1,4 @@
-# 🍴 Recipe & Meals App
+# Recipe & Meals App
 
 A simple full-stack project built with **FastAPI (backend)** and **HTML/CSS/JavaScript (frontend)**.  
 It lets users sign up, log in, and explore recipes by name, category, country, or random selection.  
@@ -6,7 +6,7 @@ Users can also save a favorite meal and delete their account.
 
 ---
 
-## ✨ Features
+## Features
 - Basic signup & login (no refresh tokens, no 2FA)
 - Recipe search by name
 - Filter recipes by category
@@ -17,7 +17,7 @@ Users can also save a favorite meal and delete their account.
 
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
 **Auth**
 - `POST /signup` → Register new user  
@@ -36,7 +36,7 @@ Users can also save a favorite meal and delete their account.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 - **Backend:** Python FastAPI  
 - **Frontend:** HTML, CSS, JavaScript  
 - **Database:** PostgreSQL  
