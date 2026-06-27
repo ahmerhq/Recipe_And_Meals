@@ -37,10 +37,9 @@ Users can also save a favorite meal and delete their account.
 ---
 
 ## 🛠️ Tech Stack
-- **Backend:** FastAPI  
+- **Backend:** Python FastAPI  
 - **Frontend:** HTML, CSS, JavaScript  
-- **Database:** PostgreSQL (Supabase)  
-- **Deployment:** Render (backend), GitHub Pages (frontend)  
+- **Database:** PostgreSQL  
 
 ---
 
@@ -62,8 +61,4 @@ Notes
 - Email verification is basic (any email works).
 
 - OTP/2FA not implemented — this is just a hobby project.
-
-
-Uselss Notes
-- Just adding to see whether new name and email are synced with vs code or not.
 
